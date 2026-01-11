@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
-import bgImage from '../assets/barbershop.webp'
+import bgVideo from '../assets/Book.mp4'
 
 export default function BookingConfirm() {
   const navigate = useNavigate()
@@ -38,11 +38,16 @@ export default function BookingConfirm() {
 
   if (isConfirmed) {
     return (
-      <div className="relative min-h-screen">
-        <div 
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${bgImage})` }}
-        />
+      <div className="relative min-h-screen overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="fixed inset-0 w-full h-full object-cover"
+        >
+          <source src={bgVideo} type="video/mp4" />
+        </video>
         <div className="fixed inset-0 bg-black/60" />
         
         <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
@@ -56,18 +61,15 @@ export default function BookingConfirm() {
             <p className="text-white/70 mb-6">{t('reminderMessage')}</p>
             
             <div className="bg-white/10 rounded-xl p-4 mb-6 text-left">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">{service.icon}</span>
-                <div>
-                  <p className="font-medium text-white">{service.name}</p>
-                  <p className="text-sm text-white/70">${service.price}</p>
-                </div>
+              <div className="mb-3">
+                <p className="font-light text-white tracking-wide">{service.name}</p>
+                <p className="text-sm text-white/70">${service.price}</p>
               </div>
               <div className="text-sm text-white/80 space-y-1">
-                <p>📅 {formatDate(date)}</p>
-                <p>🕐 {time}</p>
-                <p>👤 {name}</p>
-                <p>📱 {phone}</p>
+                <p>{formatDate(date)}</p>
+                <p>{time}</p>
+                <p>{name}</p>
+                <p>{phone}</p>
               </div>
             </div>
             
@@ -84,11 +86,16 @@ export default function BookingConfirm() {
   }
 
   return (
-    <div className="relative min-h-screen">
-      <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      />
+    <div className="relative min-h-screen overflow-hidden">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="fixed inset-0 w-full h-full object-cover"
+      >
+        <source src={bgVideo} type="video/mp4" />
+      </video>
       <div className="fixed inset-0 bg-black/60" />
 
       <div className="relative z-10 min-h-screen">
@@ -112,16 +119,11 @@ export default function BookingConfirm() {
         {/* Booking Summary */}
         <div className="px-4 py-4 bg-white/10 backdrop-blur-md border-b border-white/10">
           <div className="max-w-md mx-auto">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-2xl">{service.icon}</span>
-              <div>
-                <p className="font-medium text-white">{service.name}</p>
-                <p className="text-sm text-white/70">{service.duration} • ${service.price}</p>
-              </div>
-            </div>
-            <div className="flex gap-4 text-sm text-white/80">
-              <span>📅 {formatDate(date)}</span>
-              <span>🕐 {time}</span>
+            <p className="font-light text-white tracking-wide">{service.name}</p>
+            <p className="text-sm text-white/70 mb-2">{service.duration} • ${service.price}</p>
+            <div className="flex gap-4 text-sm text-white/60">
+              <span>{formatDate(date)}</span>
+              <span>{time}</span>
             </div>
           </div>
         </div>

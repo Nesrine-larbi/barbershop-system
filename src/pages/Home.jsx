@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import Menu from '../components/Menu'
-import bgImage from '../assets/barbershop.webp'
+import bgVideo from '../assets/3998516-uhd_4096_2160_25fps.mp4'
 import logo from '../assets/bee1.png'
 
 export default function Home() {
@@ -11,14 +11,20 @@ export default function Home() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative min-h-screen w-full">
-      {/* Full Screen Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url(${bgImage})`,
-        }}
-      />
+    <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Full Screen Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src={bgVideo} type="video/mp4" />
+      </video>
+      
+      {/* Dark Overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/30" />
 
       {/* Content Overlay */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-between py-12 px-6">
@@ -35,11 +41,14 @@ export default function Home() {
 
         {/* Center - Large Logo */}
         <div className="flex-1 flex items-center justify-center">
-          <img 
-            src={logo} 
-            alt="L'Abeille Logo" 
-            className="w-64 h-64 mix-blend-multiply drop-shadow-lg"
-          />
+          <div className="w-96 h-96 overflow-hidden flex items-center justify-center">
+            <img 
+              src={logo} 
+              alt="L'Abeille Logo" 
+              className="w-[150%] h-[150%] object-contain mix-blend-multiply drop-shadow-lg"
+              style={{ clipPath: 'circle(32% at center)' }}
+            />
+          </div>
         </div>
 
         {/* Bottom Section - Menu | Book */}
