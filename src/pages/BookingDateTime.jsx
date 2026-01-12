@@ -4,10 +4,10 @@ import { useLanguage } from '../context/LanguageContext'
 import bgVideo from '../assets/Book.mp4'
 
 const timeSlots = [
-  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+  '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
   '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
   '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM',
-  '6:00 PM', '6:30 PM', '7:00 PM'
+  '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM'
 ]
 
 export default function BookingDateTime() {
@@ -50,7 +50,8 @@ export default function BookingDateTime() {
     if (!date) return true
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    return date < today
+    // Disable past dates and Mondays (day 1)
+    return date < today || date.getDay() === 1
   }
 
   const formatDate = (date) => {
@@ -107,7 +108,7 @@ export default function BookingDateTime() {
       <div className="fixed inset-0 bg-black/60" />
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen pb-24">
+      <div className="relative z-10 min-h-screen pb-8">
         {/* Header */}
         <header className="sticky top-0 z-20 bg-black/30 backdrop-blur-sm">
           <div className="flex items-center justify-between px-6 py-4">
@@ -129,7 +130,7 @@ export default function BookingDateTime() {
         <div className="px-4 py-4 bg-white/10 backdrop-blur-md border-b border-white/10">
           <div className="max-w-md mx-auto">
             <p className="font-light text-white tracking-wide">{service.name}</p>
-            <p className="text-sm text-white/70">{service.duration} • ${service.price}</p>
+            <p className="text-sm text-white/70">{service.duration} • €{service.price}</p>
           </div>
         </div>
 
@@ -224,18 +225,18 @@ export default function BookingDateTime() {
                 )
               })}
             </div>
-          </div>
-        )}
 
-        {/* Continue Button */}
-        {selectedDate && selectedTime && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-black/50 backdrop-blur-md border-t border-white/10">
-            <button
-              onClick={handleContinue}
-              className="w-full max-w-md mx-auto block py-4 bg-white text-black text-sm font-medium tracking-[0.2em] uppercase rounded-xl hover:bg-gray-100 active:scale-[0.98] transition-all"
-            >
-              {t('continue')}
-            </button>
+            {/* Continue Button - Directly below time slots */}
+            {selectedTime && (
+              <div className="max-w-md mx-auto mt-8">
+                <button
+                  onClick={handleContinue}
+                  className="w-full py-5 bg-white text-black text-base font-semibold tracking-[0.15em] uppercase rounded-xl hover:bg-gray-100 active:scale-[0.98] transition-all shadow-lg"
+                >
+                  {t('continue')}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -13,15 +13,33 @@ const translations = {
     gallery: 'Gallery',
     contact: 'Contact',
     
-    // Booking
+    // Booking - Categories
     selectService: 'Select Service',
     chooseService: 'Choose a service to continue',
-    classicHaircut: 'Classic Haircut',
+    hairServices: 'Hair Services',
+    beardServices: 'Beard Services',
+    coloringServices: 'Coloring Services',
+    facialCare: 'Facial Care',
+    
+    // Hair Services
+    haircut: 'Haircut',
+    
+    // Beard Services
+    fullBeardCut: 'Full Beard Cut',
     beardTrim: 'Beard Trim',
-    haircutBeard: 'Haircut + Beard',
-    hotTowelShave: 'Hot Towel Shave',
-    kidsHaircut: 'Kids Haircut',
-    hairDesign: 'Hair Design',
+    beardContour: 'Beard Contour',
+    
+    // Coloring Services
+    fullColoring: 'Full Coloring',
+    highlights: 'Highlights',
+    
+    // Facial Care
+    facialMask: 'Facial Mask',
+    
+    // Services Page Column Headers
+    service: 'Service',
+    duration: 'Duration',
+    price: 'Price',
     
     // BookingDateTime
     selectDateTime: 'Select Date & Time',
@@ -77,15 +95,33 @@ const translations = {
     gallery: 'Galerie',
     contact: 'Contact',
     
-    // Booking
+    // Booking - Categories
     selectService: 'Choisir un Service',
     chooseService: 'Choisissez un service pour continuer',
-    classicHaircut: 'Coupe Classique',
-    beardTrim: 'Taille de Barbe',
-    haircutBeard: 'Coupe + Barbe',
-    hotTowelShave: 'Rasage Serviette Chaude',
-    kidsHaircut: 'Coupe Enfant',
-    hairDesign: 'Design Capillaire',
+    hairServices: 'Services Cheveux',
+    beardServices: 'Services Barbe',
+    coloringServices: 'Services Coloration',
+    facialCare: 'Soins du Visage',
+    
+    // Hair Services
+    haircut: 'Coupe de cheveux',
+    
+    // Beard Services
+    fullBeardCut: 'Coupe de barbe complète',
+    beardTrim: 'Taille de barbe',
+    beardContour: 'Contours de barbe',
+    
+    // Coloring Services
+    fullColoring: 'Coloration complète',
+    highlights: 'Coloration des mèches',
+    
+    // Facial Care
+    facialMask: 'Masque pour le visage',
+    
+    // Services Page Column Headers
+    service: 'Service',
+    duration: 'Durée',
+    price: 'Prix',
     
     // BookingDateTime
     selectDateTime: 'Choisir Date et Heure',

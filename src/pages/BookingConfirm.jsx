@@ -63,7 +63,7 @@ export default function BookingConfirm() {
             <div className="bg-white/10 rounded-xl p-4 mb-6 text-left">
               <div className="mb-3">
                 <p className="font-light text-white tracking-wide">{service.name}</p>
-                <p className="text-sm text-white/70">${service.price}</p>
+                <p className="text-sm text-white/70">€{service.price}</p>
               </div>
               <div className="text-sm text-white/80 space-y-1">
                 <p>{formatDate(date)}</p>
@@ -120,7 +120,7 @@ export default function BookingConfirm() {
         <div className="px-4 py-4 bg-white/10 backdrop-blur-md border-b border-white/10">
           <div className="max-w-md mx-auto">
             <p className="font-light text-white tracking-wide">{service.name}</p>
-            <p className="text-sm text-white/70 mb-2">{service.duration} • ${service.price}</p>
+            <p className="text-sm text-white/70 mb-2">{service.duration} • €{service.price}</p>
             <div className="flex gap-4 text-sm text-white/60">
               <span>{formatDate(date)}</span>
               <span>{time}</span>

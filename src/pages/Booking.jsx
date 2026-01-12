@@ -8,13 +8,34 @@ export default function Booking() {
   const { t } = useLanguage()
   const [selectedService, setSelectedService] = useState(null)
 
-  const services = [
-    { id: 1, name: t('classicHaircut'), price: 30, duration: '30 min' },
-    { id: 2, name: t('beardTrim'), price: 20, duration: '20 min' },
-    { id: 3, name: t('haircutBeard'), price: 45, duration: '45 min' },
-    { id: 4, name: t('hotTowelShave'), price: 35, duration: '30 min' },
-    { id: 5, name: t('kidsHaircut'), price: 25, duration: '25 min' },
-    { id: 6, name: t('hairDesign'), price: 40, duration: '40 min' },
+  const serviceCategories = [
+    {
+      category: t('hairServices'),
+      services: [
+        { id: 1, name: t('haircut'), price: 20, duration: '30 min' },
+      ]
+    },
+    {
+      category: t('beardServices'),
+      services: [
+        { id: 2, name: t('fullBeardCut'), price: 20, duration: '25 min' },
+        { id: 3, name: t('beardTrim'), price: 10, duration: '15 min' },
+        { id: 4, name: t('beardContour'), price: 10, duration: '15 min' },
+      ]
+    },
+    {
+      category: t('coloringServices'),
+      services: [
+        { id: 5, name: t('fullColoring'), price: 80, duration: '90 min' },
+        { id: 6, name: t('highlights'), price: 50, duration: '60 min' },
+      ]
+    },
+    {
+      category: t('facialCare'),
+      services: [
+        { id: 7, name: t('facialMask'), price: 40, duration: '30 min' },
+      ]
+    },
   ]
 
   const handleServiceSelect = (service) => {
@@ -61,24 +82,33 @@ export default function Booking() {
         <div className="px-4 py-6">
           <p className="text-white/70 text-sm text-center mb-6">{t('chooseService')}</p>
           
-          <div className="space-y-3 max-w-md mx-auto">
-            {services.map((service) => (
-              <button
-                key={service.id}
-                onClick={() => handleServiceSelect(service)}
-                className="w-full bg-white/10 backdrop-blur-md rounded-xl p-5 flex items-center gap-4 hover:bg-white/20 active:scale-[0.98] transition-all text-left border border-white/20"
-              >
-                <div className="flex-1">
-                  <h3 className="font-light text-white tracking-wide">{service.name}</h3>
-                  <p className="text-sm text-white/60">{service.duration}</p>
+          <div className="space-y-6 max-w-md mx-auto">
+            {serviceCategories.map((category, catIndex) => (
+              <div key={catIndex}>
+                <h2 className="text-xs font-medium text-white/50 tracking-[0.2em] uppercase mb-3">
+                  {category.category}
+                </h2>
+                <div className="space-y-2">
+                  {category.services.map((service) => (
+                    <button
+                      key={service.id}
+                      onClick={() => handleServiceSelect(service)}
+                      className="w-full bg-white/10 backdrop-blur-md rounded-xl p-5 flex items-center gap-4 hover:bg-white/20 active:scale-[0.98] transition-all text-left border border-white/20"
+                    >
+                      <div className="flex-1">
+                        <h3 className="font-light text-white tracking-wide">{service.name}</h3>
+                        <p className="text-sm text-white/60">{service.duration}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-light text-white">€{service.price}</p>
+                      </div>
+                      <svg className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  ))}
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-white">${service.price}</p>
-                </div>
-                <svg className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              </div>
             ))}
           </div>
         </div>

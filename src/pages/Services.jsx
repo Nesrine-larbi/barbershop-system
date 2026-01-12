@@ -6,13 +6,15 @@ export default function Services() {
   const navigate = useNavigate()
   const { t } = useLanguage()
 
+  // Flat list of all services
   const services = [
-    { id: 1, name: t('classicHaircut'), price: 30, duration: '30 min' },
-    { id: 2, name: t('beardTrim'), price: 20, duration: '20 min' },
-    { id: 3, name: t('haircutBeard'), price: 45, duration: '45 min' },
-    { id: 4, name: t('hotTowelShave'), price: 35, duration: '30 min' },
-    { id: 5, name: t('kidsHaircut'), price: 25, duration: '25 min' },
-    { id: 6, name: t('hairDesign'), price: 40, duration: '40 min' },
+    { id: 1, name: t('haircut'), price: 20, duration: '30 min' },
+    { id: 2, name: t('fullBeardCut'), price: 20, duration: '25 min' },
+    { id: 3, name: t('beardTrim'), price: 10, duration: '15 min' },
+    { id: 4, name: t('beardContour'), price: 10, duration: '15 min' },
+    { id: 5, name: t('fullColoring'), price: 80, duration: '60 min' },
+    { id: 6, name: t('highlightColoring'), price: 50, duration: '45 min' },
+    { id: 7, name: t('facialMask'), price: 40, duration: '30 min' },
   ]
 
   return (
@@ -27,12 +29,12 @@ export default function Services() {
       >
         <source src={bgVideo} type="video/mp4" />
       </video>
-      <div className="fixed inset-0 bg-black/50" />
+      <div className="fixed inset-0 bg-black/60" />
 
       {/* Content */}
       <div className="relative z-10 min-h-screen">
         {/* Header */}
-        <header className="sticky top-0 z-20 bg-black/20 backdrop-blur-sm">
+        <header className="sticky top-0 z-20 bg-black/30 backdrop-blur-sm">
           <div className="flex items-center justify-between px-6 py-4">
             <button
               onClick={() => navigate('/')}
@@ -43,42 +45,71 @@ export default function Services() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h1 className="text-lg font-light tracking-[0.2em] uppercase text-white drop-shadow-md">
+            <h1 className="text-lg font-light tracking-[0.2em] uppercase text-white">
               {t('services')}
             </h1>
             <div className="w-10" />
           </div>
         </header>
 
-        {/* Services List */}
-        <div className="px-4 py-8">
-          <div className="max-w-md mx-auto space-y-3">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-5 hover:bg-white/15 transition-all"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-light text-white tracking-wide">{service.name}</h3>
-                    <p className="text-sm text-white/60 tracking-wider">{service.duration}</p>
+        {/* Services List - Editorial 3-Column Layout */}
+        <div className="px-6 py-8 md:px-8">
+          <div className="max-w-2xl mx-auto">
+            {/* Column Headers */}
+            <div className="hidden md:grid grid-cols-[60%_20%_20%] mb-4 pb-3 border-b border-white/10">
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wider text-left">
+                {t('service') || 'Service'}
+              </span>
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wider text-center">
+                {t('duration') || 'Duration'}
+              </span>
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wider text-right">
+                {t('price') || 'Price'}
+              </span>
+            </div>
+
+            {/* Service Rows */}
+            <div className="space-y-8 md:space-y-0">
+              {services.map((service) => (
+                <div key={service.id}>
+                  {/* Desktop: 3-Column Grid */}
+                  <div className="hidden md:grid grid-cols-[60%_20%_20%] items-center py-4">
+                    <span className="text-white font-light text-base tracking-wide text-left">
+                      {service.name}
+                    </span>
+                    <span className="text-white/60 text-sm text-center">
+                      {service.duration}
+                    </span>
+                    <span className="text-white/60 text-sm text-right">
+                      €{service.price}
+                    </span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xl font-light text-white">${service.price}</p>
+                  
+                  {/* Mobile: Stacked Layout */}
+                  <div className="md:hidden space-y-1">
+                    <p className="text-white font-light text-base tracking-wide text-left">
+                      {service.name}
+                    </p>
+                    <p className="text-white/50 text-sm text-left">
+                      {service.duration}
+                    </p>
+                    <p className="text-white/50 text-sm text-left">
+                      €{service.price}
+                    </p>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* CTA Button */}
-          <div className="max-w-md mx-auto mt-10">
-            <button
-              onClick={() => navigate('/booking')}
-              className="w-full py-4 bg-white text-black text-sm font-medium tracking-[0.2em] uppercase rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
-            >
-              {t('book')}
-            </button>
+            {/* CTA Button */}
+            <div className="mt-16 pb-8">
+              <button
+                onClick={() => navigate('/booking')}
+                className="w-full py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white text-sm font-light tracking-[0.2em] uppercase rounded-xl hover:bg-white/20 active:scale-[0.98] transition-all"
+              >
+                {t('book')}
+              </button>
+            </div>
           </div>
         </div>
       </div>
