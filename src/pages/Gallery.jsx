@@ -1,20 +1,20 @@
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import bgVideo from '../assets/Book.mp4'
+import before1 from '../assets/Before1.PNG'
+import after1 from '../assets/After1 .PNG'
 
-// Sample gallery images - replace with your actual images
-const galleryImages = [
-  'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800',
-  'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800',
-  'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
-  'https://images.unsplash.com/photo-1599351431613-90b0fa5d1e74?w=800',
-  'https://images.unsplash.com/photo-1620331311520-246422fd82f9?w=800',
-  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800',
+// Before/After transformation pairs
+const transformations = [
+  {
+    before: before1,
+    after: after1,
+  },
 ]
 
 export default function Gallery() {
   const navigate = useNavigate()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -51,24 +51,46 @@ export default function Gallery() {
           </div>
         </header>
 
-        {/* Gallery Grid */}
+        {/* Transformations */}
         <div className="px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <p className="text-center text-white/70 text-sm tracking-widest uppercase mb-8">
-              Our Work
+              {language === 'fr' ? 'Transformations' : 'Transformations'}
             </p>
             
-            <div className="grid grid-cols-2 gap-3">
-              {galleryImages.map((image, index) => (
-                <div
-                  key={index}
-                  className="aspect-square rounded-xl overflow-hidden border border-white/20 hover:border-white/40 transition-all cursor-pointer active:scale-95"
-                >
-                  <img
-                    src={image}
-                    alt={`Gallery image ${index + 1}`}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
+            {/* Before/After Cards */}
+            <div className="space-y-8">
+              {transformations.map((transformation, index) => (
+                <div key={index} className="bg-black/30 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Before */}
+                    <div className="space-y-2">
+                      <p className="text-center text-white/50 text-xs tracking-widest uppercase">
+                        {language === 'fr' ? 'Avant' : 'Before'}
+                      </p>
+                      <div className="aspect-[3/4] rounded-xl overflow-hidden border border-white/20">
+                        <img
+                          src={transformation.before}
+                          alt="Before transformation"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* After */}
+                    <div className="space-y-2">
+                      <p className="text-center text-white/50 text-xs tracking-widest uppercase">
+                        {language === 'fr' ? 'Après' : 'After'}
+                      </p>
+                      <div className="aspect-[3/4] rounded-xl overflow-hidden border border-white/20">
+                        <img
+                          src={transformation.after}
+                          alt="After transformation"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
