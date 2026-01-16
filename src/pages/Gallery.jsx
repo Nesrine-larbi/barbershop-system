@@ -1,20 +1,31 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import bgVideo from '../assets/Book.mp4'
 import before1 from '../assets/Before1.PNG'
 import after1 from '../assets/After1 .PNG'
+import before2 from '../assets/Before2.PNG'
+import after2 from '../assets/After2.PNG'
+import before3 from '../assets/Before3.png'
+import after3 from '../assets/after3jpg.jpg'
+import before4 from '../assets/Before4.png'
+import after4 from '../assets/After4.png'
 
-// Before/After transformation pairs
-const transformations = [
-  {
-    before: before1,
-    after: after1,
-  },
+// All gallery images with labels
+const galleryItems = [
+  { image: before1, type: 'before', name: 'Client 1' },
+  { image: after1, type: 'after', name: 'Client 1' },
+  { image: before2, type: 'before', name: 'Client 2' },
+  { image: after2, type: 'after', name: 'Client 2' },
+  { image: before3, type: 'before', name: 'Client 3' },
+  { image: after3, type: 'after', name: 'Client 3' },
+  { image: before4, type: 'before', name: 'Client 4' },
+  { image: after4, type: 'after', name: 'Client 4' },
 ]
 
 export default function Gallery() {
   const navigate = useNavigate()
-  const { t, language } = useLanguage()
+  const { language } = useLanguage()
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -28,10 +39,10 @@ export default function Gallery() {
       >
         <source src={bgVideo} type="video/mp4" />
       </video>
-      <div className="fixed inset-0 bg-black/50" />
+      <div className="fixed inset-0 bg-black/60" />
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen">
+      <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
         <header className="sticky top-0 z-20 bg-black/20 backdrop-blur-sm">
           <div className="flex items-center justify-between px-6 py-4">
@@ -45,50 +56,75 @@ export default function Gallery() {
               </svg>
             </button>
             <h1 className="text-lg font-light tracking-[0.2em] uppercase text-white drop-shadow-md">
-              {t('gallery')}
+              {language === 'fr' ? 'Galerie' : 'Gallery'}
             </h1>
             <div className="w-10" />
           </div>
         </header>
 
-        {/* Transformations */}
-        <div className="px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            <p className="text-center text-white/70 text-sm tracking-widest uppercase mb-8">
-              {language === 'fr' ? 'Transformations' : 'Transformations'}
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col justify-center px-6 py-8">
+          {/* Header Section */}
+          <div className="mb-8 text-center">
+            <p className="text-white/50 text-xs tracking-[0.3em] uppercase mb-3 font-light">
+              {language === 'fr' ? 'AVANT / APRÈS' : 'BEFORE / AFTER'}
             </p>
-            
-            {/* Before/After Cards */}
-            <div className="space-y-8">
-              {transformations.map((transformation, index) => (
-                <div key={index} className="bg-black/30 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                  <div className="grid grid-cols-2 gap-3">
-                    {/* Before */}
-                    <div className="space-y-2">
-                      <p className="text-center text-white/50 text-xs tracking-widest uppercase">
-                        {language === 'fr' ? 'Avant' : 'Before'}
-                      </p>
-                      <div className="aspect-[3/4] rounded-xl overflow-hidden border border-white/20">
-                        <img
-                          src={transformation.before}
-                          alt="Before transformation"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
+            <h2 className="text-white text-2xl md:text-4xl font-light leading-tight">
+              {language === 'fr' ? (
+                <>
+                  Découvrez la Différence
+                  <br />
+                  <span className="text-white/70">Nos Résultats</span>
+                </>
+              ) : (
+                <>
+                  Witness the Difference
+                  <br />
+                  <span className="text-white/70">Our Results</span>
+                </>
+              )}
+            </h2>
+          </div>
+
+          {/* Swipe hint */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <svg className="w-4 h-4 text-white/50 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <p className="text-white/50 text-xs tracking-widest uppercase">
+              {language === 'fr' ? 'Glissez pour voir plus' : 'Swipe to see more'}
+            </p>
+            <svg className="w-4 h-4 text-white/50 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+
+          {/* Horizontal Scrolling Gallery */}
+          <div className="w-full overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="flex gap-4 px-4 min-w-max">
+              {galleryItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 w-[220px] md:w-[280px]"
+                >
+                  {/* Image */}
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
+                    <img
+                      src={item.image}
+                      alt={`${item.type} - ${item.name}`}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Gradient overlay at bottom */}
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 to-transparent" />
                     
-                    {/* After */}
-                    <div className="space-y-2">
-                      <p className="text-center text-white/50 text-xs tracking-widest uppercase">
-                        {language === 'fr' ? 'Après' : 'After'}
-                      </p>
-                      <div className="aspect-[3/4] rounded-xl overflow-hidden border border-white/20">
-                        <img
-                          src={transformation.after}
-                          alt="After transformation"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                    {/* Before/After Label */}
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                      <span className="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs tracking-wider uppercase text-white border border-white/30">
+                        {item.type === 'before' 
+                          ? (language === 'fr' ? 'Avant' : 'Before')
+                          : (language === 'fr' ? 'Après' : 'After')
+                        }
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -96,13 +132,23 @@ export default function Gallery() {
             </div>
           </div>
 
+          {/* Scroll indicator dots */}
+          <div className="flex justify-center gap-1 mt-4">
+            {galleryItems.map((_, idx) => (
+              <div
+                key={idx}
+                className="w-1.5 h-1.5 rounded-full bg-white/30"
+              />
+            ))}
+          </div>
+
           {/* CTA Button */}
-          <div className="max-w-4xl mx-auto mt-10 px-2">
+          <div className="mt-12 flex justify-center px-4">
             <button
               onClick={() => navigate('/booking')}
-              className="w-full py-4 bg-white text-black text-sm font-medium tracking-[0.2em] uppercase rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
+              className="w-full max-w-lg py-6 bg-white/10 backdrop-blur-md text-white text-lg font-light tracking-[0.3em] uppercase rounded-2xl hover:bg-white/20 active:scale-[0.98] transition-all border border-white/30"
             >
-              {t('book')}
+              {language === 'fr' ? 'Réserver Maintenant' : 'Book Now'}
             </button>
           </div>
         </div>
