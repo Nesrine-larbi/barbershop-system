@@ -78,10 +78,4 @@ Replace image URLs in `src/pages/Gallery.jsx` with your own photos.
 - Admin dashboard
 - SMS/Email confirmations
 
-## 📄 License
-
-MIT
-
----
-
-Built with ❤️ for modern barbershops
+#
