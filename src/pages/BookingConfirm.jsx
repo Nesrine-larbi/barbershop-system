@@ -37,18 +37,27 @@ export default function BookingConfirm() {
       )
     }
   }
-  
+   
 
   // Send OTP to phone
+    // ...existing code...
   const sendOtp = async () => {
     if (!name.trim() || !phone.trim()) {
       setError(language === 'FR' ? 'Veuillez remplir tous les champs' : 'Please fill in all fields')
       return
     }
-    
+  
+    // Basic E.164 format check
+    if (!phone.startsWith('+')) {
+      setError(language === 'FR' 
+        ? 'Le numéro doit commencer par + et le code pays (ex: +33 ...)' 
+        : 'Phone number must start with + and country code (e.g. +33 ...)')
+      return
+    }
+  
     setError('')
     setIsSubmitting(true)
-    
+  
     try {
       setupRecaptcha()
       const appVerifier = window.recaptchaVerifier
@@ -67,6 +76,7 @@ export default function BookingConfirm() {
       }
     }
   }
+  // ...existing code...
 
   // Save user info to Firestore
   const saveUserInfo = async (userId, userName, userPhone) => {
@@ -124,14 +134,12 @@ export default function BookingConfirm() {
     try {
       const result = await window.confirmationResult.confirm(otp)
       const user = result.user
-      
+      console.log("User UID:", user.uid) // Debug: log UID after OTP login
       // Save user info and booking to Firestore
       await saveUserInfo(user.uid, name, phone)
       await saveBooking(user.uid)
-      
       // Request notification permission
       await requestNotificationPermission(user.uid)
-      
       setIsSubmitting(false)
       setIsConfirmed(true)
     } catch (error) {
