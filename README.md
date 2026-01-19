@@ -6,7 +6,7 @@ A mobile-first, minimalistic barbershop booking web application built with React
 
 - 📱 **Mobile-First Design** - Optimized for smartphones with QR code/link access
 - 📅 **Phone Number Booking** - Simple appointment booking using phone numbers
-- 🖼️ **Gallery** - Showcase your work with photo examples
+- ️ **Gallery** - Showcase your work with photo examples
 - 💼 **Services** - Display all services with pricing
 - 📞 **Contact** - Phone number and social media links (Instagram, TikTok, Facebook)
 - 🎨 **Minimal & Elegant** - Clean UI with easy-to-tap buttons
@@ -41,7 +41,7 @@ A mobile-first, minimalistic barbershop booking web application built with React
    npm run preview
    ```
 
-## 📱 Pages
+##  Pages
 
 - **Home** - Background image with centered "Book" and "Menu" buttons
 - **Booking** - Appointment form with name, phone, date, and time
@@ -70,7 +70,7 @@ Edit `src/pages/Services.jsx` to modify the `services` array.
 ### Update Gallery
 Replace image URLs in `src/pages/Gallery.jsx` with your own photos.
 
-## 🔮 Future Features
+## � Future Features
 
 - Firebase Authentication
 - Real-time booking management
