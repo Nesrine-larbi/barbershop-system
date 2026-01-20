@@ -1,6 +1,8 @@
-import * as functions from 'firebase-functions';
+import { onDocumentCreated } from 'firebase-functions/firestore';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineString } from 'firebase-functions/params';
-import { initializeApp, getApps, getApp, firestore } from 'firebase-admin/app';
+import { initializeApp, getApps, getApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import twilio from 'twilio';
 
@@ -17,9 +19,9 @@ const twilioPhoneNumber = defineString('TWILIO_PHONE_NUMBER');
  * Send immediate SMS notification when booking is created
  * Triggered automatically by Firestore onCreate
  */
-export const sendBookingConfirmationSMS = functions.firestore
-  .document('bookings/{bookingId}')
-  .onCreate(async (snap, context) => {
+export const sendBookingConfirmationSMS = onDocumentCreated('bookings/{bookingId}', async (event) => {
+  const snap = event.data;
+  const context = event;
     try {
       // Initialize Twilio client with params
       const twilioClient = twilio(
@@ -67,10 +69,11 @@ Thank you for choosing our barbershop!`;
  * Scheduled function to send reminder SMS 24 hours before appointment
  * Runs every hour to check for upcoming appointments
  */
-export const sendAppointmentReminders = functions.pubsub
-  .schedule('every 1 hours')
-  .timeZone('Europe/Paris') // Change to your timezone
-  .onRun(async (context) => {
+export const sendAppointmentReminders = onSchedule({
+  schedule: 'every 1 hours',
+  timeZone: 'Europe/Paris',
+}, async (event) => {
+  const context = event;
     try {
       // Initialize Twilio client with params
       const twilioClient = twilio(
@@ -149,7 +152,7 @@ See you soon at the barbershop!`;
  * Manually trigger SMS to a specific user (callable function)
  * Can be called from your web app for testing or custom notifications
  */
-export const sendCustomSMS = functions.https.onCall(async (data, context) => {
+export const sendCustomSMS = onCall(async (data, context) => {
   try {
     // Initialize Twilio client with params
     const twilioClient = twilio(
@@ -159,7 +162,7 @@ export const sendCustomSMS = functions.https.onCall(async (data, context) => {
 
     // Check authentication
     if (!context.auth) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         'unauthenticated',
         'User must be authenticated'
       );
@@ -168,7 +171,7 @@ export const sendCustomSMS = functions.https.onCall(async (data, context) => {
     const { phoneNumber, message } = data;
 
     if (!phoneNumber || !message) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         'invalid-argument',
         'Phone number and message are required'
       );
@@ -183,6 +186,6 @@ export const sendCustomSMS = functions.https.onCall(async (data, context) => {
     return { success: true, messageSid: result.sid };
   } catch (error) {
     console.error('Error sending custom SMS:', error);
-    throw new functions.https.HttpsError('internal', error.message);
+    throw new HttpsError('internal', error.message);
   }
 });
