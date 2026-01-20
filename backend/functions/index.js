@@ -1,10 +1,12 @@
 import * as functions from 'firebase-functions';
 import { defineString } from 'firebase-functions/params';
-import * as admin from 'firebase-admin';
+import { initializeApp, getApps, getApp, firestore } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 import twilio from 'twilio';
 
 // Initialize Firebase Admin
-admin.initializeApp();
+const app = getApps().length ? getApp() : initializeApp();
+const db = getFirestore(app);
 
 // Define environment parameters (set these in Firebase Console or via CLI)
 const twilioAccountSid = defineString('TWILIO_ACCOUNT_SID');
@@ -29,7 +31,7 @@ export const sendBookingConfirmationSMS = functions.firestore
       const userId = booking.userId;
 
       // Get user's phone number
-      const userDoc = await admin.firestore().collection('users').doc(userId).get();
+      const userDoc = await db.collection('users').doc(userId).get();
       const userData = userDoc.data();
 
       if (!userData || !userData.phone) {
@@ -81,7 +83,7 @@ export const sendAppointmentReminders = functions.pubsub
       const in25Hours = new Date(now.getTime() + 25 * 60 * 60 * 1000);
 
       // Query bookings happening in the next 24-25 hours
-      const bookingsSnapshot = await admin.firestore()
+      const bookingsSnapshot = await db
         .collection('bookings')
         .where('status', '==', 'confirmed')
         .where('date', '>=', in24Hours.toISOString().split('T')[0])
@@ -100,7 +102,7 @@ export const sendAppointmentReminders = functions.pubsub
         }
 
         // Get user's phone number
-        const userDoc = await admin.firestore()
+        const userDoc = await db
           .collection('users')
           .doc(booking.userId)
           .get();
@@ -126,7 +128,7 @@ See you soon at the barbershop!`;
             to: userData.phone
           }).then(() => {
             // Mark reminder as sent
-            return admin.firestore()
+            return db
               .collection('bookings')
               .doc(bookingId)
               .update({ reminderSent: true });
