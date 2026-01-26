@@ -8,34 +8,17 @@ export default function Booking() {
   const { t } = useLanguage()
   const [selectedService, setSelectedService] = useState(null)
 
-  const serviceCategories = [
-    {
-      category: t('hairServices'),
-      services: [
-        { id: 1, name: t('haircut'), price: 20, duration: '30 min' },
-      ]
-    },
-    {
-      category: t('beardServices'),
-      services: [
-        { id: 2, name: t('fullBeardCut'), price: 20, duration: '25 min' },
-        { id: 3, name: t('beardTrim'), price: 10, duration: '15 min' },
-        { id: 4, name: t('beardContour'), price: 10, duration: '15 min' },
-      ]
-    },
-    {
-      category: t('coloringServices'),
-      services: [
-        { id: 5, name: t('fullColoring'), price: 80, duration: '90 min' },
-        { id: 6, name: t('highlights'), price: 50, duration: '60 min' },
-      ]
-    },
-    {
-      category: t('facialCare'),
-      services: [
-        { id: 7, name: t('facialMask'), price: 40, duration: '30 min' },
-      ]
-    },
+  // Flat list of all services - same as Services page
+  const services = [
+    { id: 1, name: 'Coupe de cheveux normale', price: 20, duration: '30 min' },
+    { id: 2, name: 'Coupe de cheveux spéciale ⭐', price: 30, duration: '40 min' },
+    { id: 3, name: 'Coupe de barbe normale', price: 20, duration: '30 min' },
+    { id: 4, name: 'Coupe de barbe spéciale ⭐', price: 30, duration: '40 min' },
+    { id: 5, name: 'Contours de barbe', price: 10, duration: '15 min' },
+    { id: 6, name: 'Coloration complète', price: 80, duration: '1 h' },
+    { id: 7, name: 'Mèches / Highlights', price: 50, duration: '1 h' },
+    { id: 8, name: 'Masque facial', price: 40, duration: '30 min' },
+    { id: 9, name: 'Prestations privées (anniversaires, mariages)', price: 'Sur demande', duration: 'Prix selon le nombre de personnes' },
   ]
 
   const handleServiceSelect = (service) => {
@@ -78,38 +61,68 @@ export default function Booking() {
           </div>
         </header>
 
-        {/* Services List */}
-        <div className="px-4 py-6">
-          <p className="text-white/70 text-sm text-center mb-6">{t('chooseService')}</p>
-          
-          <div className="space-y-6 max-w-md mx-auto">
-            {serviceCategories.map((category, catIndex) => (
-              <div key={catIndex}>
-                <h2 className="text-xs font-medium text-white/50 tracking-[0.2em] uppercase mb-3">
-                  {category.category}
-                </h2>
-                <div className="space-y-2">
-                  {category.services.map((service) => (
-                    <button
-                      key={service.id}
-                      onClick={() => handleServiceSelect(service)}
-                      className="w-full bg-white/10 backdrop-blur-md rounded-xl p-5 flex items-center gap-4 hover:bg-white/20 active:scale-[0.98] transition-all text-left border border-white/20"
-                    >
-                      <div className="flex-1">
-                        <h3 className="font-light text-white tracking-wide">{service.name}</h3>
-                        <p className="text-sm text-white/60">{service.duration}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-light text-white">€{service.price}</p>
-                      </div>
-                      <svg className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+        {/* Services List - Editorial 3-Column Layout */}
+        <div className="px-6 py-8 md:px-8">
+          <div className="max-w-2xl mx-auto">
+            {/* Section Header */}
+            <div className="mb-8 text-center">
+              <p className="text-white/50 text-xs tracking-[0.3em] uppercase mb-2">
+                {t('selectService') || 'Select a Service'}
+              </p>
+              <h2 className="text-white/70 text-sm font-light">
+                {t('chooseService') || 'Choose the service you want to book'}
+              </h2>
+            </div>
+
+            {/* Column Headers */}
+            <div className="hidden md:grid grid-cols-[60%_20%_20%] mb-4 pb-3 border-b border-white/10">
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wider text-left">
+                {t('service') || 'Service'}
+              </span>
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wider text-center">
+                {t('duration') || 'Duration'}
+              </span>
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wider text-right">
+                {t('price') || 'Price'}
+              </span>
+            </div>
+
+            {/* Service Rows - Clickable */}
+            <div className="space-y-8 md:space-y-0">
+              {services.map((service) => (
+                <button
+                  key={service.id}
+                  onClick={() => handleServiceSelect(service)}
+                  className="w-full hover:bg-white/5 active:bg-white/10 transition-all rounded-lg md:rounded-none"
+                >
+                  {/* Desktop: 3-Column Grid */}
+                  <div className="hidden md:grid grid-cols-[60%_20%_20%] items-center py-4">
+                    <span className="text-white font-light text-base tracking-wide text-left">
+                      {service.name}
+                    </span>
+                    <span className="text-white/60 text-sm text-center">
+                      {service.duration}
+                    </span>
+                    <span className="text-white/60 text-sm text-right">
+                      €{service.price}
+                    </span>
+                  </div>
+                  
+                  {/* Mobile: Stacked Layout */}
+                  <div className="md:hidden p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 space-y-1">
+                    <p className="text-white font-light text-base tracking-wide text-left">
+                      {service.name}
+                    </p>
+                    <p className="text-white/50 text-sm text-left">
+                      {service.duration}
+                    </p>
+                    <p className="text-white/50 text-sm text-left">
+                      €{service.price}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

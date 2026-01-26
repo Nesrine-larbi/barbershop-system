@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import bgVideo from '../assets/Book.mp4'
-import oussama1 from '../assets/oussama1.PNG'
+import oussama1 from '../assets/oussama1.jpg'
 import oussama2 from '../assets/oussma2.PNG'
+import logo from '../assets/bee1.png'
 
 export default function About() {
   const navigate = useNavigate()
@@ -57,7 +58,7 @@ export default function About() {
                     <img 
                       src={oussama1} 
                       alt="Ossama"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover brightness-[0.85] contrast-110"
                     />
                   </div>
                 </div>
@@ -66,6 +67,17 @@ export default function About() {
               {/* Right: Text Content - Centered */}
               <div className="space-y-10 text-center">
                 
+                {/* Logo - Elegant & Subtle */}
+                <div className="flex justify-center mb-6 animate-fade-in">
+                  <div className="w-24 h-24 md:w-32 md:h-32 opacity-60 hover:opacity-80 transition-opacity duration-500">
+                    <img 
+                      src={logo} 
+                      alt="Bee Logo"
+                      className="w-full h-full object-contain filter drop-shadow-lg"
+                    />
+                  </div>
+                </div>
+
                 {/* Story */}
                 <div className="space-y-6">
                   <p className="text-white/90 text-xl md:text-2xl font-light leading-relaxed">
