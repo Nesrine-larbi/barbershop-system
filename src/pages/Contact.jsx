@@ -144,20 +144,12 @@ export default function Contact() {
                   </p>
                   <div className="flex gap-8">
                     <a
-                      href="https://instagram.com/yourbarbershop"
+                      href="https://www.instagram.com/labeillebarber_/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-white text-sm hover:text-white/60 transition-colors"
                     >
                       Instagram
-                    </a>
-                    <a
-                      href="https://tiktok.com/@yourbarbershop"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white text-sm hover:text-white/60 transition-colors"
-                    >
-                      TikTok
                     </a>
                   </div>
                 </div>

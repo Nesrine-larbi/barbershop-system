@@ -60,7 +60,7 @@ export default function Gallery() {
               </svg>
             </button>
             <h1 className="text-lg font-light tracking-[0.2em] uppercase text-white drop-shadow-md">
-              {language === 'fr' ? 'Galerie' : 'Gallery'}
+              {language === 'FR' ? 'Galerie' : 'Gallery'}
             </h1>
             <div className="w-10" />
           </div>
@@ -71,10 +71,10 @@ export default function Gallery() {
           {/* Header Section */}
           <div className="mb-8 text-center">
             <p className="text-white/50 text-xs tracking-[0.3em] uppercase mb-3 font-light">
-              {language === 'fr' ? 'AVANT / APRÈS' : 'BEFORE / AFTER'}
+              {language === 'FR' ? 'AVANT / APRÈS' : 'BEFORE / AFTER'}
             </p>
             <h2 className="text-white text-2xl md:text-4xl font-light leading-tight">
-              {language === 'fr' ? (
+              {language === 'FR' ? (
                 <>
                   Découvrez la Différence
                   <br />
@@ -96,7 +96,7 @@ export default function Gallery() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
             <p className="text-white/50 text-xs tracking-widest uppercase">
-              {language === 'fr' ? 'Glissez pour voir plus' : 'Swipe to see more'}
+              {language === 'FR' ? 'Glissez pour voir plus' : 'Swipe to see more'}
             </p>
             <svg className="w-4 h-4 text-white/50 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -125,8 +125,8 @@ export default function Gallery() {
                     <div className="absolute bottom-4 left-0 right-0 flex justify-center">
                       <span className="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs tracking-wider uppercase text-white border border-white/30">
                         {item.type === 'before' 
-                          ? (language === 'fr' ? 'Avant' : 'Before')
-                          : (language === 'fr' ? 'Après' : 'After')
+                          ? (language === 'FR' ? 'Avant' : 'Before')
+                          : (language === 'FR' ? 'Après' : 'After')
                         }
                       </span>
                     </div>
@@ -152,7 +152,7 @@ export default function Gallery() {
               onClick={() => navigate('/booking')}
               className="w-full max-w-lg py-6 bg-white/10 backdrop-blur-md text-white text-lg font-light tracking-[0.3em] uppercase rounded-2xl hover:bg-white/20 active:scale-[0.98] transition-all border border-white/30"
             >
-              {language === 'fr' ? 'Réserver Maintenant' : 'Book Now'}
+              {language === 'FR' ? 'Réserver Maintenant' : 'Book Now'}
             </button>
           </div>
         </div>

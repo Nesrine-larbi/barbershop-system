@@ -38,7 +38,7 @@ export default function About() {
               </svg>
             </button>
             <h1 className="text-lg font-light tracking-[0.2em] uppercase text-white">
-              {language === 'FR' ? 'À Propos' : 'About'}
+              {language === 'FR' ? 'À propos de nous' : 'Our Story'}
             </h1>
             <div className="w-10" />
           </div>
@@ -57,7 +57,7 @@ export default function About() {
                   <div className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden ring-1 ring-white/10">
                     <img 
                       src={oussama1} 
-                      alt="Ossama"
+                      alt="Oussama"
                       className="w-full h-full object-cover brightness-[0.85] contrast-110"
                     />
                   </div>
@@ -81,25 +81,40 @@ export default function About() {
                 {/* Story */}
                 <div className="space-y-6">
                   <p className="text-white/90 text-xl md:text-2xl font-light leading-relaxed">
-                    Ravi de vous accueillir. Je suis Ossama, votre coiffeur.
+                    {language === 'FR' 
+                      ? "Ravi de vous accueillir. Je suis Oussama, votre coiffeur."
+                      : "Pleased to welcome you. I am Oussama, your barber."
+                    }
                   </p>
                   
                   <p className="text-white/60 text-base md:text-lg leading-relaxed">
-                    Formé entre la France, l'Italie et l'Algérie, je mélange dans chaque coupe l'élégance européenne et la précision nord-africaine. Avec passion et amour du métier, je ne considère pas la coiffure comme un simple service, mais comme un art qui révèle la personnalité et la confiance de chaque homme.
+                    {language === 'FR'
+                      ? "Formé entre la France, l'Italie et l'Algérie, je mélange dans chaque coupe l'élégance européenne et la précision nord-africaine. Avec passion et amour du métier, je ne considère pas la coiffure comme un simple service, mais comme un art qui révèle la personnalité et la confiance de chaque homme."
+                      : "Trained between France, Italy and Algeria, I blend European elegance and North African precision in every cut. With passion and love for the craft, I don't consider hairdressing as a simple service, but as an art that reveals the personality and confidence of every man."
+                    }
                   </p>
                   
                   <p className="text-white/60 text-base md:text-lg leading-relaxed">
-                    Chaque détail compte pour moi, et chaque client repart plus affûté qu'à son arrivée.
+                    {language === 'FR'
+                      ? "Chaque détail compte pour moi, et chaque client repart plus affûté qu'à son arrivée."
+                      : "Every detail matters to me, and every client leaves sharper than when they arrived."
+                    }
                   </p>
                 </div>
 
                 {/* Quote */}
                 <div className="space-y-4 pt-4">
                   <p className="text-white/50 text-sm italic">
-                    Votre style. Votre moment. Mon savoir-faire.
+                    {language === 'FR'
+                      ? "Votre style. Votre moment. Mon savoir-faire."
+                      : "Your style. Your moment. My expertise."
+                    }
                   </p>
                   <p className="text-white/90 text-lg md:text-xl font-light">
-                    « Je ne me contente pas de couper les cheveux, je façonne la confiance. »
+                    {language === 'FR'
+                      ? "« Je ne me contente pas de couper les cheveux, je façonne la confiance. »"
+                      : '"I don\'t just cut hair, I shape confidence."'
+                    }
                   </p>
                 </div>
 
@@ -122,7 +137,7 @@ export default function About() {
               <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden ring-1 ring-white/10">
                 <img 
                   src={oussama2} 
-                  alt="Ossama at work"
+                  alt="Oussama at work"
                   className="w-full h-full object-cover"
                 />
               </div>

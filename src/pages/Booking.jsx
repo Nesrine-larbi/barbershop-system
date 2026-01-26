@@ -5,20 +5,74 @@ import bgVideo from '../assets/Book.mp4'
 
 export default function Booking() {
   const navigate = useNavigate()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const [selectedService, setSelectedService] = useState(null)
 
-  // Flat list of all services - same as Services page
+  // Flat list of all services - same as Services page with translations
   const services = [
-    { id: 1, name: 'Coupe de cheveux normale', price: 20, duration: '30 min' },
-    { id: 2, name: 'Coupe de cheveux spéciale ⭐', price: 30, duration: '40 min' },
-    { id: 3, name: 'Coupe de barbe normale', price: 20, duration: '30 min' },
-    { id: 4, name: 'Coupe de barbe spéciale ⭐', price: 30, duration: '40 min' },
-    { id: 5, name: 'Contours de barbe', price: 10, duration: '15 min' },
-    { id: 6, name: 'Coloration complète', price: 80, duration: '1 h' },
-    { id: 7, name: 'Mèches / Highlights', price: 50, duration: '1 h' },
-    { id: 8, name: 'Masque facial', price: 40, duration: '30 min' },
-    { id: 9, name: 'Prestations privées (anniversaires, mariages)', price: 'Sur demande', duration: 'Prix selon le nombre de personnes' },
+    { 
+      id: 1, 
+      nameFR: 'Coupe de cheveux normale', 
+      nameEN: 'Regular Haircut',
+      price: 20, 
+      duration: '30 min' 
+    },
+    { 
+      id: 2, 
+      nameFR: 'Coupe de cheveux spéciale ⭐', 
+      nameEN: 'Special Haircut ⭐',
+      price: 30, 
+      duration: '40 min' 
+    },
+    { 
+      id: 3, 
+      nameFR: 'Coupe de barbe normale', 
+      nameEN: 'Regular Beard Trim',
+      price: 20, 
+      duration: '30 min' 
+    },
+    { 
+      id: 4, 
+      nameFR: 'Coupe de barbe spéciale ⭐', 
+      nameEN: 'Special Beard Trim ⭐',
+      price: 30, 
+      duration: '40 min' 
+    },
+    { 
+      id: 5, 
+      nameFR: 'Contours de barbe', 
+      nameEN: 'Beard Contour',
+      price: 10, 
+      duration: '15 min' 
+    },
+    { 
+      id: 6, 
+      nameFR: 'Coloration complète', 
+      nameEN: 'Full Coloring',
+      price: 80, 
+      duration: '1 h' 
+    },
+    { 
+      id: 7, 
+      nameFR: 'Mèches / Highlights', 
+      nameEN: 'Highlights',
+      price: 50, 
+      duration: '1 h' 
+    },
+    { 
+      id: 8, 
+      nameFR: 'Masque facial', 
+      nameEN: 'Facial Mask',
+      price: 40, 
+      duration: '30 min' 
+    },
+    { 
+      id: 9, 
+      nameFR: 'Prestations privées (anniversaires, mariages)', 
+      nameEN: 'Private Events (birthdays, weddings)',
+      price: language === 'FR' ? 'Sur demande' : 'On request', 
+      duration: language === 'FR' ? 'Prix selon le nombre de personnes' : 'Price based on number of people' 
+    },
   ]
 
   const handleServiceSelect = (service) => {
@@ -98,7 +152,7 @@ export default function Booking() {
                   {/* Desktop: 3-Column Grid */}
                   <div className="hidden md:grid grid-cols-[60%_20%_20%] items-center py-4">
                     <span className="text-white font-light text-base tracking-wide text-left">
-                      {service.name}
+                      {language === 'FR' ? service.nameFR : service.nameEN}
                     </span>
                     <span className="text-white/60 text-sm text-center">
                       {service.duration}
@@ -111,7 +165,7 @@ export default function Booking() {
                   {/* Mobile: Stacked Layout */}
                   <div className="md:hidden p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 space-y-1">
                     <p className="text-white font-light text-base tracking-wide text-left">
-                      {service.name}
+                      {language === 'FR' ? service.nameFR : service.nameEN}
                     </p>
                     <p className="text-white/50 text-sm text-left">
                       {service.duration}
