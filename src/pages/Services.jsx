@@ -8,13 +8,15 @@ export default function Services() {
 
   // Flat list of all services
   const services = [
-    { id: 1, name: t('haircut'), price: 20, duration: '30 min' },
-    { id: 2, name: t('fullBeardCut'), price: 20, duration: '25 min' },
-    { id: 3, name: t('beardTrim'), price: 10, duration: '15 min' },
-    { id: 4, name: t('beardContour'), price: 10, duration: '15 min' },
-    { id: 5, name: t('fullColoring'), price: 80, duration: '60 min' },
-    { id: 6, name: t('highlightColoring'), price: 50, duration: '45 min' },
-    { id: 7, name: t('facialMask'), price: 40, duration: '30 min' },
+    { id: 1, name: 'Coupe de cheveux normale', price: 20, duration: '30 min' },
+    { id: 2, name: 'Coupe de cheveux spéciale ⭐', price: 30, duration: '40 min' },
+    { id: 3, name: 'Coupe de barbe normale', price: 20, duration: '30 min' },
+    { id: 4, name: 'Coupe de barbe spéciale ⭐', price: 30, duration: '40 min' },
+    { id: 5, name: 'Contours de barbe', price: 10, duration: '15 min' },
+    { id: 6, name: 'Coloration complète', price: 80, duration: '1 h' },
+    { id: 7, name: 'Mèches / Highlights', price: 50, duration: '1 h' },
+    { id: 8, name: 'Masque facial', price: 40, duration: '30 min' },
+    { id: 9, name: 'Prestations privées (anniversaires, mariages)', price: 'Sur demande', duration: 'Prix selon le nombre de personnes' },
   ]
 
   return (

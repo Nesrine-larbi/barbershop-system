@@ -10,6 +10,7 @@ const translations = {
     // Menu
     bookAppointment: 'Book Appointment',
     services: 'Services',
+    about: 'About',
     gallery: 'Gallery',
     contact: 'Contact',
     
@@ -92,6 +93,7 @@ const translations = {
     // Menu
     bookAppointment: 'Prendre Rendez-vous',
     services: 'Services',
+    about: 'À Propos',
     gallery: 'Galerie',
     contact: 'Contact',
     

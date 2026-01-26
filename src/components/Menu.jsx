@@ -36,6 +36,9 @@ export default function Menu({ isOpen, onClose }) {
             <MenuLink to="/services" onClick={onClose}>
               {t('services')}
             </MenuLink>
+            <MenuLink to="/about" onClick={onClose}>
+              {t('about')}
+            </MenuLink>
             <MenuLink to="/gallery" onClick={onClose}>
               {t('gallery')}
             </MenuLink>

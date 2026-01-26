@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import bgVideo from '../assets/Book.mp4'
+import before0 from '../assets/before0-.JPG'
+import after0 from '../assets/after0.PNG'
 import before1 from '../assets/Before1.PNG'
 import after1 from '../assets/After1 .PNG'
 import before2 from '../assets/Before2.PNG'
@@ -13,6 +15,8 @@ import after4 from '../assets/After4.png'
 
 // All gallery images with labels
 const galleryItems = [
+  { image: before0, type: 'before', name: 'Client 0' },
+  { image: after0, type: 'after', name: 'Client 0' },
   { image: before1, type: 'before', name: 'Client 1' },
   { image: after1, type: 'after', name: 'Client 1' },
   { image: before2, type: 'before', name: 'Client 2' },
@@ -101,11 +105,11 @@ export default function Gallery() {
 
           {/* Horizontal Scrolling Gallery */}
           <div className="w-full overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            <div className="flex gap-4 px-4 min-w-max">
+            <div className="flex gap-6 px-4 min-w-max">
               {galleryItems.map((item, index) => (
                 <div
                   key={index}
-                  className="flex-shrink-0 w-[220px] md:w-[280px]"
+                  className="flex-shrink-0 w-[280px] md:w-[360px]"
                 >
                   {/* Image */}
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
