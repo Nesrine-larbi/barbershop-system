@@ -1,81 +1,65 @@
 # 💈 Barbershop Booking System
 
-A mobile-first, minimalistic barbershop booking web application built with React, Vite, and Tailwind CSS.
+A mobile-first barbershop booking web application built with React, Vite, Tailwind CSS, and Firebase.
 
-## ✨ Features
+## 🚀 Quick Start
 
-- 📱 **Mobile-First Design** - Optimized for smartphones with QR code/link access
-- 📅 **Phone Number Booking** - Simple appointment booking using phone numbers
-- ️ **Gallery** - Showcase your work with photo examples
-- 💼 **Services** - Display all services with pricing
-- 📞 **Contact** - Phone number and social media links (Instagram, TikTok, Facebook)
-- 🎨 **Minimal & Elegant** - Clean UI with easy-to-tap buttons
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
 
-## 🚀 Tech Stack
+### Installation
 
-- **React 18** - Modern functional components with hooks
-- **Vite** - Lightning-fast development and build tool
-- **Tailwind CSS** - Utility-first styling
-- **React Router** - Client-side routing
-- **Firebase** *(Coming soon)* - Database, authentication, and push notifications
+```bash
+# Install dependencies
+npm install
 
-## 📦 Installation
+# Start development server
+npm run dev
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-2. **Start development server:**
-   ```bash
-   npm run dev
-   ```
-
-3. **Build for production:**
-   ```bash
-   npm run build
-   ```
-
-4. **Preview production build:**
-   ```bash
-   npm run preview
-   ```
-
-##  Pages
-
-- **Home** - Background image with centered "Book" and "Menu" buttons
-- **Booking** - Appointment form with name, phone, date, and time
-- **Services** - List of services with pricing
-- **Gallery** - Photo grid of work examples
-- **Contact** - Phone number, address, social media links, and business hours
-
-## 🎨 Customization
-
-### Update Background Image
-Edit `src/pages/Home.jsx` and replace the `backgroundImage` URL:
-```javascript
-backgroundImage: `url('YOUR_IMAGE_URL')`,
+# Build for production
+npm run build
 ```
 
-### Update Contact Info
-Edit `src/pages/Contact.jsx` to update:
-- Phone number
-- Address
-- Social media links
-- Business hours
+The app will run at `http://localhost:5173`
 
-### Update Services
-Edit `src/pages/Services.jsx` to modify the `services` array.
+## 📦 Available Scripts
 
-### Update Gallery
-Replace image URLs in `src/pages/Gallery.jsx` with your own photos.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint |
 
-## � Future Features
+## 🛠️ Tech Stack
 
-- Firebase Authentication
-- Real-time booking management
-- Push notifications for promotions
-- Admin dashboard
-- SMS/Email confirmations
+- React 19
+- Vite 7
+- Tailwind CSS 4
+- Firebase
+- React Router
 
-#
+## 📱 Features
+
+- Mobile-first responsive design
+- Booking system with phone number
+- Service listings with pricing
+- Photo gallery
+- Contact information
+- Multi-language support (English/French)
+
+## 🔥 Firebase Setup
+
+1. Create a Firebase project at [firebase.google.com](https://firebase.google.com)
+2. Add your Firebase config to `src/firebase.js`
+3. Deploy Firebase functions:
+   ```bash
+   cd backend/functions
+   npm install
+   firebase deploy --only functions
+   ```
+
+## 📄 License
+
+MIT
