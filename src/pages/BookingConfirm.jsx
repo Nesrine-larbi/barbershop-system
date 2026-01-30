@@ -50,6 +50,11 @@ export default function BookingConfirm() {
       // Don't fail the booking if SMS fails
     }
   }
+
+  // Get service name based on language
+  const getServiceName = () => {
+    return language === 'FR' ? service.nameFR : service.nameEN
+  }
    
 
   // Save booking directly without authentication
@@ -77,7 +82,7 @@ export default function BookingConfirm() {
         name: name.trim(),
         phone: phone.trim(),
         service: {
-          name: service.name,
+          name: getServiceName(),
           price: service.price,
           duration: service.duration
         },
@@ -139,7 +144,7 @@ export default function BookingConfirm() {
             
             <div className="bg-white/10 rounded-xl p-4 mb-6 text-left">
               <div className="mb-3">
-                <p className="font-light text-white tracking-wide">{service.name}</p>
+                <p className="font-light text-white tracking-wide">{getServiceName()}</p>
                 <p className="text-sm text-white/70">€{service.price}</p>
               </div>
               <div className="text-sm text-white/80 space-y-1">
@@ -196,7 +201,7 @@ export default function BookingConfirm() {
         {/* Booking Summary */}
         <div className="px-4 py-4 bg-white/10 backdrop-blur-md border-b border-white/10">
           <div className="max-w-md mx-auto">
-            <p className="font-light text-white tracking-wide">{service.name}</p>
+            <p className="font-light text-white tracking-wide">{getServiceName()}</p>
             <p className="text-sm text-white/70 mb-2">{service.duration} • €{service.price}</p>
             <div className="flex gap-4 text-sm text-white/60">
               <span>{formatDate(date)}</span>
