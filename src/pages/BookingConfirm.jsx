@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { doc, setDoc } from "firebase/firestore"
+import { httpsCallable, getFunctions } from 'firebase/functions'
 import { db } from "../firebase"
 import bgVideo from '../assets/Book.mp4'
 
@@ -27,6 +28,28 @@ export default function BookingConfirm() {
   const generateBookingId = () => {
     return `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
+
+  // Send SMS confirmation via Firebase Functions
+  const sendSMSConfirmation = async (bookingData) => {
+    try {
+      const functions = getFunctions()
+      const sendBookingSMS = httpsCallable(functions, 'sendBookingConfirmationSMS')
+      
+      await sendBookingSMS({
+        phone: bookingData.phone,
+        name: bookingData.name,
+        service: bookingData.service.name,
+        date: formatDate(bookingData.date),
+        time: bookingData.time,
+        price: bookingData.service.price
+      })
+      
+      console.log('SMS confirmation sent successfully')
+    } catch (error) {
+      console.error('Error sending SMS:', error)
+      // Don't fail the booking if SMS fails
+    }
+  }
    
 
   // Save booking directly without authentication
@@ -50,8 +73,7 @@ export default function BookingConfirm() {
     try {
       const bookingId = generateBookingId()
       
-      // Save booking to Firestore
-      await setDoc(doc(db, "bookings", bookingId), {
+      const bookingData = {
         name: name.trim(),
         phone: phone.trim(),
         service: {
@@ -64,7 +86,13 @@ export default function BookingConfirm() {
         status: 'confirmed',
         createdAt: new Date().toISOString(),
         bookingId
-      })
+      }
+      
+      // Save booking to Firestore
+      await setDoc(doc(db, "bookings", bookingId), bookingData)
+      
+      // Send SMS confirmation
+      await sendSMSConfirmation(bookingData)
       
       setIsSubmitting(false)
       setIsConfirmed(true)

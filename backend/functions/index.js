@@ -5,62 +5,128 @@ import { defineString } from 'firebase-functions/params';
 import { initializeApp, getApps, getApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import twilio from 'twilio';
+import dotenv from 'dotenv';
+
+// Load environment variables in local development
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 // Initialize Firebase Admin
 const app = getApps().length ? getApp() : initializeApp();
 const db = getFirestore(app);
 
-// Define environment parameters (set these in Firebase Console or via CLI)
-const twilioAccountSid = defineString('TWILIO_ACCOUNT_SID');
-const twilioAuthToken = defineString('TWILIO_AUTH_TOKEN');
-const twilioPhoneNumber = defineString('TWILIO_PHONE_NUMBER');
+// Get Twilio credentials from environment
+const getTwilioCredentials = () => {
+  // Try environment variables first (for local development)
+  if (process.env.TWILIO_ACCOUNT_SID) {
+    return {
+      accountSid: process.env.TWILIO_ACCOUNT_SID,
+      authToken: process.env.TWILIO_AUTH_TOKEN,
+      phoneNumber: process.env.TWILIO_PHONE_NUMBER
+    };
+  }
+  
+  // Fallback to hardcoded values (for production)
+  return {
+    accountSid: 'ACd01370a51806c26496b8e47ff47b59e9',
+    authToken: '68a8fe0be479dc1e27a2dc5420445ecc',
+    phoneNumber: '+19704260424'
+  };
+};
+
+/**
+ * Callable function to send booking confirmation SMS
+ * Called directly from the frontend
+ */
+export const sendBookingConfirmationSMS = onCall(async (request) => {
+  try {
+    const { data } = request;
+    const { phone, name, service, date, time, price } = data;
+
+    if (!phone || !name || !service) {
+      throw new HttpsError('invalid-argument', 'Missing required booking data');
+    }
+
+    // Get Twilio credentials
+    const credentials = getTwilioCredentials();
+    const twilioClient = twilio(credentials.accountSid, credentials.authToken);
+
+    // Format the message
+    const message = `Booking Confirmed! ✅
+
+Service: ${service}
+Date: ${date}
+Time: ${time}
+Price: €${price}
+
+Name: ${name}
+
+Thank you for choosing L'Abeille Barbershop!
+
+📍 118 Rue Saint Dizier, Nancy
+📞 07 53 75 70 53`;
+
+    // Send SMS via Twilio
+    const result = await twilioClient.messages.create({
+      body: message,
+      from: credentials.phoneNumber,
+      to: phone
+    });
+
+    console.log('Booking confirmation SMS sent:', result.sid);
+    return { success: true, messageSid: result.sid };
+  } catch (error) {
+    console.error('Error sending booking confirmation SMS:', error);
+    throw new HttpsError('internal', `Failed to send SMS: ${error.message}`);
+  }
+});
 
 /**
  * Send immediate SMS notification when booking is created
- * Triggered automatically by Firestore onCreate
+ * Triggered automatically by Firestore onCreate (BACKUP METHOD)
  */
-export const sendBookingConfirmationSMS = onDocumentCreated('bookings/{bookingId}', async (event) => {
+export const sendBookingConfirmationSMS_Auto = onDocumentCreated('bookings/{bookingId}', async (event) => {
   const snap = event.data;
   const context = event;
     try {
-      // Initialize Twilio client with params
-      const twilioClient = twilio(
-        twilioAccountSid.value(),
-        twilioAuthToken.value()
-      );
+      // Get Twilio credentials
+      const credentials = getTwilioCredentials();
+      const twilioClient = twilio(credentials.accountSid, credentials.authToken);
 
       const booking = snap.data();
-      const userId = booking.userId;
 
-      // Get user's phone number
-      const userDoc = await db.collection('users').doc(userId).get();
-      const userData = userDoc.data();
-
-      if (!userData || !userData.phone) {
-        console.log('No phone number found for user:', userId);
+      if (!booking.phone || !booking.name) {
+        console.log('Missing phone or name in booking:', booking);
         return null;
       }
 
       // Format the message
-      const message = `Booking Confirmed! 
+      const message = `Booking Confirmed! ✅
+
 Service: ${booking.service.name}
 Date: ${new Date(booking.date).toLocaleDateString()}
 Time: ${booking.time}
 Price: €${booking.service.price}
 
-Thank you for choosing our barbershop!`;
+Name: ${booking.name}
+
+Thank you for choosing L'Abeille Barbershop!
+
+📍 118 Rue Saint Dizier, Nancy
+📞 07 53 75 70 53`;
 
       // Send SMS via Twilio
       const result = await twilioClient.messages.create({
         body: message,
-        from: twilioPhoneNumber.value(),
-        to: userData.phone
+        from: credentials.phoneNumber,
+        to: booking.phone
       });
 
-      console.log('SMS sent successfully:', result.sid);
+      console.log('Auto SMS sent successfully:', result.sid);
       return result;
     } catch (error) {
-      console.error('Error sending SMS:', error);
+      console.error('Error sending auto SMS:', error);
       return null;
     }
   });
@@ -75,11 +141,9 @@ export const sendAppointmentReminders = onSchedule({
 }, async (event) => {
   const context = event;
     try {
-      // Initialize Twilio client with params
-      const twilioClient = twilio(
-        twilioAccountSid.value(),
-        twilioAuthToken.value()
-      );
+      // Get Twilio credentials
+      const credentials = getTwilioCredentials();
+      const twilioClient = twilio(credentials.accountSid, credentials.authToken);
 
       const now = new Date();
       const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -104,31 +168,27 @@ export const sendAppointmentReminders = onSchedule({
           continue;
         }
 
-        // Get user's phone number
-        const userDoc = await db
-          .collection('users')
-          .doc(booking.userId)
-          .get();
-        
-        const userData = userDoc.data();
-
-        if (!userData || !userData.phone) {
+        if (!booking.phone || !booking.name) {
           continue;
         }
 
         // Send reminder SMS
-        const message = `Reminder: You have an appointment tomorrow!
+        const message = `Reminder: You have an appointment tomorrow! ⏰
+
 Service: ${booking.service.name}
 Date: ${new Date(booking.date).toLocaleDateString()}
 Time: ${booking.time}
 
-See you soon at the barbershop!`;
+See you soon at L'Abeille Barbershop!
+
+📍 118 Rue Saint Dizier, Nancy
+📞 07 53 75 70 53`;
 
         promises.push(
           twilioClient.messages.create({
             body: message,
-            from: twilioPhoneNumber.value(),
-            to: userData.phone
+            from: credentials.phoneNumber,
+            to: booking.phone
           }).then(() => {
             // Mark reminder as sent
             return db
@@ -152,22 +212,13 @@ See you soon at the barbershop!`;
  * Manually trigger SMS to a specific user (callable function)
  * Can be called from your web app for testing or custom notifications
  */
-export const sendCustomSMS = onCall(async (data, context) => {
+export const sendCustomSMS = onCall(async (request) => {
   try {
-    // Initialize Twilio client with params
-    const twilioClient = twilio(
-      twilioAccountSid.value(),
-      twilioAuthToken.value()
-    );
+    // Get Twilio credentials
+    const credentials = getTwilioCredentials();
+    const twilioClient = twilio(credentials.accountSid, credentials.authToken);
 
-    // Check authentication
-    if (!context.auth) {
-      throw new HttpsError(
-        'unauthenticated',
-        'User must be authenticated'
-      );
-    }
-
+    const { data } = request;
     const { phoneNumber, message } = data;
 
     if (!phoneNumber || !message) {
@@ -179,7 +230,7 @@ export const sendCustomSMS = onCall(async (data, context) => {
 
     const result = await twilioClient.messages.create({
       body: message,
-      from: twilioPhoneNumber.value(),
+      from: credentials.phoneNumber,
       to: phoneNumber
     });
 

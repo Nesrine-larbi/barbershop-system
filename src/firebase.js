@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getMessaging } from "firebase/messaging";
+import { getFunctions } from "firebase/functions";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,7 +23,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const messaging = getMessaging(app);
+const functions = getFunctions(app);
 
 console.log("Firebase connected");
 
-export { app, auth, db, messaging };
+export { app, auth, db, messaging, functions };
