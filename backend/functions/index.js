@@ -18,19 +18,17 @@ const db = getFirestore(app);
 
 // Get Twilio credentials from environment
 const getTwilioCredentials = () => {
-  // Try environment variables first (for local development)
-  if (process.env.TWILIO_ACCOUNT_SID) {
-    return {
-      accountSid: process.env.TWILIO_ACCOUNT_SID,
-      authToken: process.env.TWILIO_AUTH_TOKEN,
-      phoneNumber: process.env.TWILIO_PHONE_NUMBER
-    };
-  }
+  console.log('DEBUG - Environment check:');
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('TWILIO_ACCOUNT_SID exists:', !!process.env.TWILIO_ACCOUNT_SID);
+  console.log('TWILIO_AUTH_TOKEN exists:', !!process.env.TWILIO_AUTH_TOKEN);
+  console.log('TWILIO_PHONE_NUMBER exists:', !!process.env.TWILIO_PHONE_NUMBER);
   
-  // Fallback to hardcoded values (for production)
+  // Force using hardcoded values for now (TEMP FIX)
+  console.log('Using hardcoded values for testing');
   return {
     accountSid: 'ACd01370a51806c26496b8e47ff47b59e9',
-    authToken: '68a8fe0be479dc1e27a2dc5420445ecc',
+    authToken: 'f7094d8bb5ff0d996b0ab20673399fa9',
     phoneNumber: '+19704260424'
   };
 };
@@ -39,7 +37,9 @@ const getTwilioCredentials = () => {
  * Callable function to send booking confirmation SMS
  * Called directly from the frontend
  */
-export const sendBookingConfirmationSMS = onCall(async (request) => {
+export const sendBookingConfirmationSMS = onCall({
+  cors: true
+}, async (request) => {
   try {
     const { data } = request;
     const { phone, name, service, date, time, price } = data;
