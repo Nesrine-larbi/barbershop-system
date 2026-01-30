@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getMessaging } from "firebase/messaging";
 import { getFunctions } from "firebase/functions";
@@ -20,11 +19,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services
-const auth = getAuth(app);
 const db = getFirestore(app);
 const messaging = getMessaging(app);
 const functions = getFunctions(app);
 
 console.log("Firebase connected");
 
-export { app, auth, db, messaging, functions };
+export { app, db, messaging, functions };
