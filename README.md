@@ -60,6 +60,3 @@ The app will run at `http://localhost:5173`
    firebase deploy --only functions
    ```
 
-## 📄 License
-
-MIT
