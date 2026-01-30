@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
 import { doc, setDoc } from "firebase/firestore"
-import { getToken } from "firebase/messaging"
-import { auth, db, messaging } from "../firebase"
+import { db } from "../firebase"
 import bgVideo from '../assets/Book.mp4'
 
 export default function BookingConfirm() {
@@ -16,8 +14,6 @@ export default function BookingConfirm() {
 
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [otp, setOtp] = useState('')
-  const [isOtpSent, setIsOtpSent] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isConfirmed, setIsConfirmed] = useState(false)
   const [error, setError] = useState('')
@@ -27,149 +23,61 @@ export default function BookingConfirm() {
     return date.toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
   }
 
-  // Cleanup reCAPTCHA on unmount
-  useEffect(() => {
-    return () => {
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear()
-        window.recaptchaVerifier = null
-      }
-    }
-  }, [])
-
-  // Setup invisible reCAPTCHA
-  const setupRecaptcha = () => {
-    // Clear any existing verifier
-    if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.clear()
-      window.recaptchaVerifier = null
-    }
-    
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      "recaptcha-container",
-      { size: "invisible" }
-    )
+  // Generate simple booking ID
+  const generateBookingId = () => {
+    return `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
    
 
-  // Send OTP to phone
-    // ...existing code...
-  const sendOtp = async () => {
+  // Save booking directly without authentication
+  const saveBooking = async () => {
     if (!name.trim() || !phone.trim()) {
       setError(language === 'FR' ? 'Veuillez remplir tous les champs' : 'Please fill in all fields')
       return
     }
-  
-    // Basic E.164 format check
+
+    // Basic phone format check
     if (!phone.startsWith('+')) {
       setError(language === 'FR' 
         ? 'Le numéro doit commencer par + et le code pays (ex: +33 ...)' 
         : 'Phone number must start with + and country code (e.g. +33 ...)')
       return
     }
-  
+
     setError('')
     setIsSubmitting(true)
-  
+
     try {
-      setupRecaptcha()
-      const appVerifier = window.recaptchaVerifier
-      const confirmationResult = await signInWithPhoneNumber(auth, phone, appVerifier)
-      window.confirmationResult = confirmationResult
-      setIsOtpSent(true)
-      setIsSubmitting(false)
-    } catch (error) {
-      console.error("OTP Error:", error)
-      setError(language === 'FR' ? 'Erreur lors de l\'envoi du code. Vérifiez le numéro.' : 'Error sending code. Please check the number.')
-      setIsSubmitting(false)
-      // Reset reCAPTCHA on error
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear()
-        window.recaptchaVerifier = null
-      }
-    }
-  }
-  // ...existing code...
-
-  // Save user info to Firestore
-  const saveUserInfo = async (userId, userName, userPhone) => {
-    await setDoc(doc(db, "users", userId), {
-      name: userName,
-      phone: userPhone,
-      createdAt: new Date().toISOString()
-    })
-  }
-
-  // Save booking to Firestore
-  const saveBooking = async (userId) => {
-    const bookingId = `${userId}_${Date.now()}`
-    await setDoc(doc(db, "bookings", bookingId), {
-      userId,
-      service: {
-        name: service.name,
-        price: service.price,
-        duration: service.duration
-      },
-      date,
-      time,
-      status: 'confirmed',
-      createdAt: new Date().toISOString()
-    })
-  }
-
-  // Request notification permission and save FCM token
-  const requestNotificationPermission = async (userId) => {
-    try {
-      const permission = await Notification.requestPermission()
-      if (permission === "granted") {
-        // Replace with your actual VAPID key from Firebase Console
-        const token = await getToken(messaging, { 
-          vapidKey: "BB1PoFrdQ6L1IzJnV5cAB_0NIVDUPjIcLg8kb7N5breLKUC9s0ZfnY4fCuMTvrC2fFgRFCKnHB7LgCg-qP78JdA" 
-        })
-        await setDoc(doc(db, "users", userId), { fcmToken: token }, { merge: true })
-        console.log("FCM Token saved:", token)
-      }
-    } catch (error) {
-      console.log("Notification permission error:", error)
-    }
-  }
-
-  // Verify OTP and complete booking
-  const verifyOtp = async () => {
-    if (!otp.trim()) {
-      setError(language === 'FR' ? 'Veuillez entrer le code' : 'Please enter the code')
-      return
-    }
-    
-    setError('')
-    setIsSubmitting(true)
-    
-    try {
-      const result = await window.confirmationResult.confirm(otp)
-      const user = result.user
-      console.log("User UID:", user.uid) // Debug: log UID after OTP login
-      // Save user info and booking to Firestore
-      await saveUserInfo(user.uid, name, phone)
-      await saveBooking(user.uid)
-      // Request notification permission
-      await requestNotificationPermission(user.uid)
+      const bookingId = generateBookingId()
+      
+      // Save booking to Firestore
+      await setDoc(doc(db, "bookings", bookingId), {
+        name: name.trim(),
+        phone: phone.trim(),
+        service: {
+          name: service.name,
+          price: service.price,
+          duration: service.duration
+        },
+        date,
+        time,
+        status: 'confirmed',
+        createdAt: new Date().toISOString(),
+        bookingId
+      })
+      
       setIsSubmitting(false)
       setIsConfirmed(true)
     } catch (error) {
-      console.error("Verification Error:", error)
-      setError(language === 'FR' ? 'Code invalide. Réessayez.' : 'Invalid code. Please try again.')
+      console.error("Booking Error:", error)
+      setError(language === 'FR' ? 'Erreur lors de la réservation. Réessayez.' : 'Error making booking. Please try again.')
       setIsSubmitting(false)
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isOtpSent) {
-      await sendOtp()
-    } else {
-      await verifyOtp()
-    }
+    await saveBooking()
   }
 
   if (!service || !date || !time) {
@@ -279,99 +187,46 @@ export default function BookingConfirm() {
               </div>
             )}
 
-            {!isOtpSent ? (
-              <>
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-white/70 mb-2">
-                    {t('yourName')}
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-all"
-                    placeholder="John Doe"
-                  />
-                </div>
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-white/70 mb-2">
+                {t('yourName')}
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-all"
+                placeholder="John Doe"
+              />
+            </div>
 
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-white/70 mb-2">
-                    {t('phoneNumber')}
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-all"
-                    placeholder="+213 612 345 678"
-                  />
-                  <p className="text-xs text-white/50 mt-1">{t('phoneHint')}</p>
-                </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-white/70 mb-2">
+                {t('phoneNumber')}
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-all"
+                placeholder="+213 612 345 678"
+              />
+              <p className="text-xs text-white/50 mt-1">{t('phoneHint')}</p>
+            </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting 
-                    ? (language === 'FR' ? 'Envoi du code...' : 'Sending code...') 
-                    : (language === 'FR' ? 'Envoyer le code de vérification' : 'Send verification code')}
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="text-center mb-4">
-                  <p className="text-white/70 text-sm">
-                    {language === 'FR' 
-                      ? `Code envoyé à ${phone}` 
-                      : `Code sent to ${phone}`}
-                  </p>
-                </div>
-
-                <div>
-                  <label htmlFor="otp" className="block text-sm font-medium text-white/70 mb-2">
-                    {language === 'FR' ? 'Code de vérification' : 'Verification Code'}
-                  </label>
-                  <input
-                    type="text"
-                    id="otp"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    required
-                    maxLength={6}
-                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-all text-center text-2xl tracking-[0.5em]"
-                    placeholder="------"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? t('confirming') : t('confirmBookingBtn')}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsOtpSent(false)
-                    setOtp('')
-                    setError('')
-                  }}
-                  className="w-full py-2 text-white/70 text-sm hover:text-white transition-all"
-                >
-                  {language === 'FR' ? 'Modifier le numéro' : 'Change phone number'}
-                </button>
-              </>
-            )}
-
-            {/* Invisible reCAPTCHA container */}
-            <div id="recaptcha-container"></div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting 
+                ? (language === 'FR' ? 'Réservation en cours...' : 'Booking...') 
+                : (language === 'FR' ? 'Confirmer la réservation' : 'Confirm Booking')}
+            </button>
           </form>
         </div>
       </div>

@@ -7,12 +7,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-comp
 // Initialize the Firebase app in the service worker by passing in
 // your app's Firebase config object.
 firebase.initializeApp({
-  apiKey: "AIzaSyA3rubUq06rVm1fRoxC4BJOCEJSihPRts8",
-  authDomain: "barbershop-app-a3657.firebaseapp.com",
-  projectId: "barbershop-app-a3657",
-  storageBucket: "barbershop-app-a3657.firebasestorage.app",
-  messagingSenderId: "488932919037",
-  appId: "1:488932919037:web:59d045eb788e909389e094"
+  apiKey: "AIzaSyAjikAgqsDF22OwbG455jEnS960uqC49bw",
+  authDomain: "barbershop-954c6.firebaseapp.com",
+  projectId: "barbershop-954c6",
+  storageBucket: "barbershop-954c6.firebasestorage.app",
+  messagingSenderId: "427301002353",
+  appId: "1:427301002353:web:ef8225d1ee445339694fd0"
 });
 
 // Retrieve an instance of Firebase Messaging so that it can handle background

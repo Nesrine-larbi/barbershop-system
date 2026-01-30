@@ -6,7 +6,7 @@ import { getMessaging } from "firebase/messaging";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAjikAgqsDF22OwbG455jEnS969uqC49bw",
+  apiKey: "AIzaSyAjikAgqsDF22OwbG455jEnS960uqC49bw",
   authDomain: "barbershop-954c6.firebaseapp.com",
   projectId: "barbershop-954c6",
   storageBucket: "barbershop-954c6.firebasestorage.app",
