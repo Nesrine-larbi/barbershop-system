@@ -1,14 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { supabase } from '../supabaseClient'
 import bgVideo from '../assets/Book.mp4'
 
-const timeSlots = [
-  '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-  '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
-  '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM',
-  '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM'
-]
+// Generate all time slots in 30-minute intervals from 10:00 AM to 8:00 PM
+const generateTimeSlots = () => {
+  const slots = []
+  for (let hour = 10; hour <= 20; hour++) {
+    for (let minute of [0, 30]) {
+      if (hour === 20 && minute === 30) break // Stop at 8:00 PM
+      const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+      slots.push(time24)
+    }
+  }
+  return slots
+}
+
+const timeSlots24 = generateTimeSlots()
 
 export default function BookingDateTime() {
   const navigate = useNavigate()
@@ -19,8 +28,82 @@ export default function BookingDateTime() {
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [bookedSlots, setBookedSlots] = useState([])
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false)
   
   const locale = language === 'FR' ? 'fr-FR' : 'en-US'
+
+  // Convert 24h time to 12h format for display
+  const format12Hour = (time24) => {
+    const [hours, minutes] = time24.split(':').map(Number)
+    const period = hours >= 12 ? 'PM' : 'AM'
+    const displayHour = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours
+    return `${displayHour}:${minutes.toString().padStart(2, '0')} ${period}`
+  }
+
+  // Parse duration string to minutes
+  const parseDuration = (duration) => {
+    const match = duration.match(/(\d+)\s*(h|min)/)
+    if (!match) return 30 // default
+    const value = parseInt(match[1])
+    const unit = match[2]
+    return unit === 'h' ? value * 60 : value
+  }
+
+  // Fetch booked slots from Supabase when date changes
+  useEffect(() => {
+    if (selectedDate) {
+      fetchBookedSlots(selectedDate)
+    }
+  }, [selectedDate])
+
+  const fetchBookedSlots = async (date) => {
+    setIsLoadingSlots(true)
+    try {
+      console.log('📅 Fetching booked slots for date:', date)
+      const { data, error } = await supabase.rpc('get_booked_slots', { selected_date: date })
+      
+      if (error) {
+        console.error('❌ Error fetching booked slots:', error)
+        setBookedSlots([])
+      } else {
+        console.log('✅ Booked slots:', data)
+        // Convert timestamptz to time-only for comparison
+        const slotsWithTime = (data || []).map(slot => ({
+          start_time: new Date(slot.start_time).toTimeString().slice(0, 5), // "14:30"
+          end_time: new Date(slot.end_time).toTimeString().slice(0, 5)
+        }))
+        setBookedSlots(slotsWithTime)
+      }
+    } catch (err) {
+      console.error('❌ Error:', err)
+      setBookedSlots([])
+    } finally {
+      setIsLoadingSlots(false)
+    }
+  }
+
+  // Check if a time slot conflicts with booked appointments
+  const isSlotDisabled = (timeSlot) => {
+    if (!service || bookedSlots.length === 0) return false
+    
+    const serviceDuration = parseDuration(service.duration)
+    const [slotHour, slotMinute] = timeSlot.split(':').map(Number)
+    const slotStart = slotHour * 60 + slotMinute
+    const slotEnd = slotStart + serviceDuration
+
+    // Check if this slot overlaps with any booked slot
+    return bookedSlots.some(booked => {
+      const [bookedStartHour, bookedStartMinute] = booked.start_time.split(':').map(Number)
+      const [bookedEndHour, bookedEndMinute] = booked.end_time.split(':').map(Number)
+      
+      const bookedStart = bookedStartHour * 60 + bookedStartMinute
+      const bookedEnd = bookedEndHour * 60 + bookedEndMinute
+
+      // Check for any overlap
+      return (slotStart < bookedEnd && slotEnd > bookedStart)
+    })
+  }
 
   // Get days in month
   const getDaysInMonth = (date) => {
@@ -68,7 +151,9 @@ export default function BookingDateTime() {
 
   const handleDateSelect = (date) => {
     if (!isDateDisabled(date)) {
-      setSelectedDate(date.toISOString().split('T')[0])
+      const dateStr = date.toISOString().split('T')[0]
+      setSelectedDate(dateStr)
+      setSelectedTime('') // Reset time when date changes
     }
   }
 
@@ -206,32 +291,49 @@ export default function BookingDateTime() {
         {/* Time Selection */}
         {selectedDate && (
           <div className="px-4 py-6">
-            <h2 className="text-xs font-medium text-white/60 tracking-[0.2em] uppercase mb-4 max-w-md mx-auto">{t('selectTime')}</h2>
-            <div className="max-w-md mx-auto grid grid-cols-3 gap-2">
-              {timeSlots.map((time) => {
-                const isSelected = selectedTime === time
-                return (
-                  <button
-                    key={time}
-                    onClick={() => setSelectedTime(time)}
-                    className={`py-3 px-2 rounded-xl text-sm font-light tracking-wide transition-all border ${
-                      isSelected 
-                        ? 'bg-white text-black border-white' 
-                        : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
-                    }`}
-                  >
-                    {time}
-                  </button>
-                )
-              })}
-            </div>
+            <h2 className="text-xs font-medium text-white/60 tracking-[0.2em] uppercase mb-4 max-w-md mx-auto">
+              {t('selectTime')}
+            </h2>
+            
+            {isLoadingSlots ? (
+              <div className="max-w-md mx-auto text-center py-8">
+                <div className="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                <p className="text-white/60 mt-4 text-sm">
+                  {language === 'FR' ? 'Chargement des disponibilités...' : 'Loading availability...'}
+                </p>
+              </div>
+            ) : (
+              <div className="max-w-md mx-auto grid grid-cols-3 gap-2">
+                {timeSlots24.map((time24) => {
+                  const isSelected = selectedTime === time24
+                  const isDisabled = isSlotDisabled(time24)
+                  
+                  return (
+                    <button
+                      key={time24}
+                      onClick={() => !isDisabled && setSelectedTime(time24)}
+                      disabled={isDisabled}
+                      className={`py-3 px-2 rounded-xl text-sm font-light tracking-wide transition-all border ${
+                        isSelected 
+                          ? 'bg-linear-to-r from-amber-500 to-yellow-600 text-black border-amber-400 shadow-lg shadow-amber-500/30' 
+                          : isDisabled
+                          ? 'bg-white/5 text-white/30 border-white/10 cursor-not-allowed line-through'
+                          : 'bg-white/10 text-white border-white/20 hover:bg-white/20 hover:border-amber-500/50'
+                      }`}
+                    >
+                      {format12Hour(time24)}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
 
             {/* Continue Button - Directly below time slots */}
             {selectedTime && (
               <div className="max-w-md mx-auto mt-8">
                 <button
                   onClick={handleContinue}
-                  className="w-full py-5 bg-white text-black text-base font-semibold tracking-[0.15em] uppercase rounded-xl hover:bg-gray-100 active:scale-[0.98] transition-all shadow-lg"
+                  className="w-full py-5 bg-linear-to-r from-amber-500 to-yellow-600 text-black text-base font-semibold tracking-[0.15em] uppercase rounded-xl hover:from-amber-400 hover:to-yellow-500 active:scale-[0.98] transition-all shadow-lg shadow-amber-500/30"
                 >
                   {t('continue')}
                 </button>
